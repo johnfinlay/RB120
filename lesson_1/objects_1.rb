@@ -1,6 +1,7 @@
 # Exercise 1
 class MyCar
-  attr_accessor :year, :color, :model, :speed
+  attr_accessor :color, :speed
+  attr_reader :year, :model
 
   def initialize(y, c, m)
     @year = y
@@ -22,13 +23,13 @@ class MyCar
   end
 end
 
-jimmy = MyCar.new(1979, 'grey', 'GMC Jimmy')
-jimmy.increase_speed(55)
-puts jimmy.speed
-jimmy.brake(25)
-puts jimmy.speed
-jimmy.shut_off
-puts jimmy.speed
+# jimmy = MyCar.new(1979, 'grey', 'GMC Jimmy')
+# jimmy.increase_speed(55)
+# puts jimmy.speed
+# jimmy.brake(25)
+# puts jimmy.speed
+# jimmy.shut_off
+# puts jimmy.speed
 
 # Exercise 2
 
