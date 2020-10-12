@@ -1,12 +1,25 @@
-class MyCar
+module TruckBeds
+  def load_bed(item_count, weight)
+    puts "You've added #{item_count} items weighing #{weight} lbs. to the truck bed."
+  end
+end
+
+class Vehicle
   attr_accessor :color, :speed
   attr_reader :year, :model
+
+  @@total_vehicles = 0
 
   def initialize(y, c, m)
     @year = y
     @color = c
     @model = m
     @speed = 0
+    @@total_vehicles += 1
+  end
+
+  def self.vehicle_count
+    puts "#{@@total_vehicles} vehicles on the road!"
   end
 
   def to_s
@@ -15,6 +28,10 @@ class MyCar
 
   def self.calculate_mileage(miles, gallons)
     puts "#{miles / gallons} miles per gallon."
+  end
+
+  def age
+    puts "This vehicle is #{calculate_age} years old."
   end
 
   def increase_speed(mph)
@@ -32,6 +49,23 @@ class MyCar
   def spray_paint(c)
     self.color = c
   end
+
+  private
+
+  def calculate_age
+    this_year = Time.new
+    this_year.year - self.year
+  end
+end
+
+class MyCar < Vehicle
+  NUMBER_OF_DOORS = 4
+end
+
+class MyTruck < Vehicle
+  include TruckBeds
+
+  NUMBER_OF_DOORS = 2
 end
 
 jimmy = MyCar.new(1979, 'grey', 'GMC Jimmy')
@@ -47,3 +81,5 @@ puts jimmy.color
 MyCar.calculate_mileage(351, 13)
 
 puts jimmy
+
+jimmy.age
