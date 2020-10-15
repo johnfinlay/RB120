@@ -1,7 +1,8 @@
 class Banner
-  def initialize(message)
+  def initialize(message, width = 0)
     @message = message
-    @filler = message.length + 2
+    @width = width >= message.length ? width : message.length
+    @half_width, @remainder = (@width - message.length).divmod(2)
   end
 
   def to_s
@@ -11,25 +12,23 @@ class Banner
   private
 
   def horizontal_rule
-    @horizontal_rule = "+#{'-' * @filler}+"
+    @horizontal_rule = "+-#{'-' * @width}-+"
   end
 
   def empty_line
-    @empty_line = "|#{' ' * @filler}|"
+    @empty_line = "| #{' ' * @width} |"
   end
 
   def message_line
-    "| #{@message} |"
+    if @message.length.zero?
+      empty_line
+    else
+      "| #{' ' * @half_width}#{@message}#{' ' * (@half_width + @remainder)} |"
+    end
   end
-
-  # private
-
-  # def message
-  #   @message
-  # end
 end
 
-banner = Banner.new('To boldly go where no one has gone before.')
+banner = Banner.new('To boldly go where no one has gone before.', 56)
 puts banner
 # +--------------------------------------------+
 # |                                            |
@@ -37,7 +36,7 @@ puts banner
 # |                                            |
 # +--------------------------------------------+
 
-banner = Banner.new('')
+banner = Banner.new('', 17)
 puts banner
 # +--+
 # |  |
