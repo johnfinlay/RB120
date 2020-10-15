@@ -2,6 +2,7 @@ class Banner
   def initialize(message, width = 0)
     @message = message
     @width = width >= message.length ? width : message.length
+    @width = 80 if @width > 80
     @half_width, @remainder = (@width - message.length).divmod(2)
   end
 
@@ -28,7 +29,7 @@ class Banner
   end
 end
 
-banner = Banner.new('To boldly go where no one has gone before.', 56)
+banner = Banner.new('To boldly go where no one has gone before.', 3258)
 puts banner
 # +--------------------------------------------+
 # |                                            |
