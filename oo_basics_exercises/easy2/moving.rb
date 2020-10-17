@@ -1,6 +1,10 @@
 module Walkable
   def walk
-    puts "#{name} #{gait} forward"
+    if self.class == Noble
+      puts "#{title} #{name} #{gait} forward"
+    else
+      puts "#{name} #{gait} forward"
+    end
   end
 end
 
@@ -52,6 +56,21 @@ class Cheetah
   end
 end
 
+class Noble
+  include Walkable
+
+  attr_accessor :name, :title
+
+  def initialize(name, title)
+    @name = name
+    @title = title
+  end
+
+  def gait
+    "struts"
+  end
+end
+
 mike = Person.new("Mike")
 mike.walk
 # => "Mike strolls forward"
@@ -63,3 +82,11 @@ kitty.walk
 flash = Cheetah.new("Flash")
 flash.walk
 # => "Flash runs forward"
+
+byron = Noble.new("Byron", "Lord")
+byron.walk
+# => "Lord Byron struts forward"
+p byron.name
+# => "Byron"
+p byron.title
+# => "Lord"
