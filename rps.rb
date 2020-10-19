@@ -40,8 +40,6 @@ class Computer < Player
 end
 
 class Move
-  include Comparable
-
   VALUES = ['rock', 'paper', 'scissors']
 
   def initialize(value)
@@ -61,38 +59,19 @@ class Move
   end
 
   def >(other)
-    if rock?
-      return true if other.scissors?
-      return false
-    elsif paper?
-      return true if other.rock?
-      return false
-    elsif scissors?
-      return true if other.paper?
-      return false
-    end
+    (rock? && other.scissors?) ||
+      (paper? && other.rock?) ||
+      (scissors? && other.paper?)
   end
 
   def <(other)
-    if rock?
-      return true if other.paper?
-      return false
-    elsif paper?
-      return true if other.scissors?
-      return false
-    elsif scissors?
-      return true if other.rock?
-      return false
-    end
+    (rock? && other.paper?) ||
+      (paper? && other.scissors?) ||
+      (scissors? && other.rock?)
   end
 
   def to_s
     @value
-  end
-end
-
-class Rule
-  def initialize
   end
 end
 
@@ -112,10 +91,12 @@ class RPSGame
     puts "Thanks for playing Rock, Paper, Scissors. Good bye, #{human.name}!"
   end
 
-  def display_winner
+  def display_moves
     puts "#{human.name} chose #{human.move}."
     puts "#{computer.name} chose #{computer.move}."
+  end
 
+  def display_winner
     if human.move > computer.move
       puts "#{human.name} won!"
     elsif human.move < computer.move
@@ -123,20 +104,6 @@ class RPSGame
     else
       puts "It's a tie!"
     end
-  #   case human.move
-  #   when 'rock'
-  #     puts "It's a tie!" if computer.move == 'rock'
-  #     puts "#{human.name} won!" if computer.move == 'scissors'
-  #     puts "#{computer.name} won!" if computer.move == 'paper'
-  #   when 'paper'
-  #     puts "It's a tie!" if computer.move == 'paper'
-  #     puts "#{human.name} won!" if computer.move == 'rock'
-  #     puts "#{computer.name} won!" if computer.move == 'scissors'
-  #   when 'scissors'
-  #     puts "It's a tie!" if computer.move == 'scissors'
-  #     puts "#{human.name} won!" if computer.move == 'paper'
-  #     puts "#{computer.name} won!" if computer.move == 'rock'
-  #   end
   end
 
   def play_again?
@@ -147,7 +114,7 @@ class RPSGame
       break if ['y', 'n'].include?(answer.downcase)
       puts "Sorry, must be y or n."
     end
-    answer == 'y'
+    answer.downcase == 'y'
   end
 
   def play
@@ -156,16 +123,13 @@ class RPSGame
     loop do
       human.choose
       computer.choose
+      display_moves
       display_winner
       break unless play_again?
     end
 
     display_goodbye_message
   end
-end
-
-def compare(move1, move2)
-
 end
 
 RPSGame.new.play
