@@ -1,26 +1,3 @@
-=begin
-  Rock, Paper, Scissors is a two-player game where each player chooses
-  one of three possible moves: rock, paper, or scissors. The chosen moves
-  will then be compared to see who wins, according to the following rules:
-
-  - rock beats scissors
-  - scissors beats paper
-  - paper beats rock
-
-  If the players chose the same move, then it's a tie.
-
-  Nouns: player, move, rule
-  Verbs: choose, compare
-
-  Player
-  - choose
-  Move
-  Rule
-
-  - compare
-
-=end
-
 class Player
   attr_accessor :move, :name
 
@@ -45,10 +22,10 @@ class Human < Player
     loop do
       puts "Please choose rock, paper, or scissors:"
       choice = gets.chomp
-      break if ['rock', 'paper', 'scissors'].include?(choice)
+      break if Move::VALUES.include?(choice)
       puts "Sorry, invalid choice."
     end
-    self.move = choice
+    self.move = Move.new(choice)
   end
 end
 
@@ -58,12 +35,59 @@ class Computer < Player
   end
 
   def choose
-    self.move = ['rock', 'paper', 'scissors'].sample
+    self.move = Move.new(Move::VALUES.sample)
   end
 end
 
 class Move
-  def initialize
+  include Comparable
+
+  VALUES = ['rock', 'paper', 'scissors']
+
+  def initialize(value)
+    @value = value
+  end
+
+  def rock?
+    @value == 'rock'
+  end
+
+  def paper?
+    @value == 'paper'
+  end
+
+  def scissors?
+    @value == 'scissors'
+  end
+
+  def >(other)
+    if rock?
+      return true if other.scissors?
+      return false
+    elsif paper?
+      return true if other.rock?
+      return false
+    elsif scissors?
+      return true if other.paper?
+      return false
+    end
+  end
+
+  def <(other)
+    if rock?
+      return true if other.paper?
+      return false
+    elsif paper?
+      return true if other.scissors?
+      return false
+    elsif scissors?
+      return true if other.rock?
+      return false
+    end
+  end
+
+  def to_s
+    @value
   end
 end
 
@@ -92,20 +116,27 @@ class RPSGame
     puts "#{human.name} chose #{human.move}."
     puts "#{computer.name} chose #{computer.move}."
 
-    case human.move
-    when 'rock'
-      puts "It's a tie!" if computer.move == 'rock'
-      puts "#{human.name} won!" if computer.move == 'scissors'
-      puts "#{computer.name} won!" if computer.move == 'paper'
-    when 'paper'
-      puts "It's a tie!" if computer.move == 'paper'
-      puts "#{human.name} won!" if computer.move == 'rock'
-      puts "#{computer.name} won!" if computer.move == 'scissors'
-    when 'scissors'
-      puts "It's a tie!" if computer.move == 'scissors'
-      puts "#{human.name} won!" if computer.move == 'paper'
-      puts "#{computer.name} won!" if computer.move == 'rock'
+    if human.move > computer.move
+      puts "#{human.name} won!"
+    elsif human.move < computer.move
+      puts "#{computer.name} won!"
+    else
+      puts "It's a tie!"
     end
+  #   case human.move
+  #   when 'rock'
+  #     puts "It's a tie!" if computer.move == 'rock'
+  #     puts "#{human.name} won!" if computer.move == 'scissors'
+  #     puts "#{computer.name} won!" if computer.move == 'paper'
+  #   when 'paper'
+  #     puts "It's a tie!" if computer.move == 'paper'
+  #     puts "#{human.name} won!" if computer.move == 'rock'
+  #     puts "#{computer.name} won!" if computer.move == 'scissors'
+  #   when 'scissors'
+  #     puts "It's a tie!" if computer.move == 'scissors'
+  #     puts "#{human.name} won!" if computer.move == 'paper'
+  #     puts "#{computer.name} won!" if computer.move == 'rock'
+  #   end
   end
 
   def play_again?
