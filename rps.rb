@@ -31,7 +31,7 @@ class Human < Player
   def choose
     choice = ''
     loop do
-      puts "Please choose rock, paper, or scissors:"
+      puts "Please choose rock, paper, scissors, lizard, or spock:"
       choice = gets.chomp
       break if Move::VALUES.include?(choice)
       puts "Sorry, invalid choice."
@@ -51,34 +51,24 @@ class Computer < Player
 end
 
 class Move
-  VALUES = ['rock', 'paper', 'scissors']
+  attr_reader :value
 
+  VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
+  BEATS = { 'rock' => ['scissors', 'lizard'],
+            'paper' => ['rock', 'spock'],
+            'scissors' => ['paper', 'lizard'],
+            'lizard' => ['paper', 'spock'],
+            'spock' => ['rock', 'scissors'] }
   def initialize(value)
     @value = value
   end
 
-  def rock?
-    @value == 'rock'
-  end
-
-  def paper?
-    @value == 'paper'
-  end
-
-  def scissors?
-    @value == 'scissors'
-  end
-
   def >(other)
-    (rock? && other.scissors?) ||
-      (paper? && other.rock?) ||
-      (scissors? && other.paper?)
+    BEATS[value].include?(other.value)
   end
 
   def <(other)
-    (rock? && other.paper?) ||
-      (paper? && other.scissors?) ||
-      (scissors? && other.rock?)
+    BEATS[other.value].include?(value)
   end
 
   def to_s
