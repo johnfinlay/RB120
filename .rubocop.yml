@@ -394,7 +394,7 @@ Lint/IdentityComparison: # (new in 0.91)
   Enabled: true
 
 Lint/MissingSuper: # (new in 0.89)
-  Enabled: true
+  Enabled: false
 
 Lint/OutOfRangeRegexpRef: # (new in 0.89)
   Enabled: true

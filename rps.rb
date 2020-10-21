@@ -33,10 +33,10 @@ class Human < Player
     loop do
       puts "Please choose rock, paper, scissors, lizard, or spock:"
       choice = gets.chomp
-      break if Move::VALUES.include?(choice)
+      break if RPSGame::VALUES.include?(choice)
       puts "Sorry, invalid choice."
     end
-    self.move = Move.new(choice)
+    self.move = RPSGame::VALUES[choice]
   end
 end
 
@@ -46,29 +46,19 @@ class Computer < Player
   end
 
   def choose
-    self.move = Move.new(Move::VALUES.sample)
+    self.move = RPSGame::VALUES[RPSGame::VALUES.keys.sample]
   end
 end
 
 class Move
-  attr_reader :value
-
-  VALUES = ['rock', 'paper', 'scissors', 'lizard', 'spock']
-  BEATS = { 'rock' => ['scissors', 'lizard'],
-            'paper' => ['rock', 'spock'],
-            'scissors' => ['paper', 'lizard'],
-            'lizard' => ['paper', 'spock'],
-            'spock' => ['rock', 'scissors'] }
-  def initialize(value)
-    @value = value
-  end
+  attr_reader :value, :beats
 
   def >(other)
-    BEATS[value].include?(other.value)
+    beats.include?(other.value)
   end
 
   def <(other)
-    BEATS[other.value].include?(value)
+    other.beats.include?(value)
   end
 
   def to_s
@@ -76,10 +66,50 @@ class Move
   end
 end
 
+class Rock < Move
+  def initialize
+    @value = 'rock'
+    @beats = ['scissors', 'lizard']
+  end
+end
+
+class Paper < Move
+  def initialize
+    @value = 'paper'
+    @beats = ['rock', 'spock']
+  end
+end
+
+class Scissors < Move
+  def initialize
+    @value = 'scissors'
+    @beats = ['paper', 'lizard']
+  end
+end
+
+class Lizard < Move
+  def initialize
+    @value = 'lizard'
+    @beats = ['paper', 'spock']
+  end
+end
+
+class Spock < Move
+  def initialize
+    @value = 'spock'
+    @beats = ['rock', 'scissors']
+  end
+end
+
 class RPSGame
   attr_accessor :human, :computer
 
   WINNING_SCORE = 3
+  VALUES = { 'rock' => Rock.new,
+             'paper' => Paper.new,
+             'scissors' => Scissors.new,
+             'lizard' => Lizard.new,
+             'spock' => Spock.new }
 
   def initialize
     @human = Human.new
