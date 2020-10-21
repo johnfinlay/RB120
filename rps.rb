@@ -1,9 +1,10 @@
 class Player
-  attr_accessor :move, :name, :score
+  attr_accessor :move, :name, :score, :history
 
   def initialize
     set_name
     @score = 0
+    @history = []
   end
 
   def wins!
@@ -14,6 +15,10 @@ class Player
   def reset!
     @score = 0
     @move = nil
+  end
+
+  def display_history
+    puts "#{name}'s previous moves: #{history.join(', ')}"
   end
 end
 
@@ -37,6 +42,7 @@ class Human < Player
       puts "Sorry, invalid choice."
     end
     self.move = RPSGame::VALUES[choice]
+    history << move
   end
 end
 
@@ -47,6 +53,7 @@ class Computer < Player
 
   def choose
     self.move = RPSGame::VALUES[RPSGame::VALUES.keys.sample]
+    history << move
   end
 end
 
@@ -101,22 +108,7 @@ class Spock < Move
   end
 end
 
-class RPSGame
-  attr_accessor :human, :computer
-
-  WINNING_SCORE = 3
-  VALUES = { 'rock' => Rock.new,
-             'paper' => Paper.new,
-             'scissors' => Scissors.new,
-             'lizard' => Lizard.new,
-             'spock' => Spock.new }
-
-  def initialize
-    @human = Human.new
-    @computer = Computer.new
-    @winner = false
-  end
-
+module Displayable
   def display_welcome_message
     puts "Greetings, #{human.name}!\nWelcome to Rock, Paper, Scissors!"
   end
@@ -138,6 +130,25 @@ class RPSGame
     else
       puts "It's a tie!"
     end
+  end
+end
+
+class RPSGame
+  attr_accessor :human, :computer
+
+  include Displayable
+
+  WINNING_SCORE = 3
+  VALUES = { 'rock' => Rock.new,
+             'paper' => Paper.new,
+             'scissors' => Scissors.new,
+             'lizard' => Lizard.new,
+             'spock' => Spock.new }
+
+  def initialize
+    @human = Human.new
+    @computer = Computer.new
+    @winner = false
   end
 
   def play_again?
@@ -174,11 +185,17 @@ class RPSGame
     check_winner
   end
 
+  def show_history
+    human.display_history unless human.history.empty?
+    computer.display_history unless computer.history.empty?
+  end
+
   def play
     display_welcome_message
 
     loop do
       loop do
+        show_history
         human.choose
         computer.choose
         finish_game
