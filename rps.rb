@@ -51,8 +51,29 @@ class Computer < Player
     self.name = ['R2D2', 'Hal', 'Chappie', 'Sonny', 'Number 5'].sample
   end
 
+  def hal_choose(num)
+    if num <= 40
+      RPSGame::VALUES['scissors']
+    elsif num <= 46
+      RPSGame::VALUES['rock']
+    elsif num <= 64
+      RPSGame::VALUES['paper']
+    elsif num <= 82
+      RPSGame::VALUES['lizard']
+    else
+      RPSGame::VALUES['spock']
+    end
+  end
+
   def choose
-    self.move = RPSGame::VALUES[RPSGame::VALUES.keys.sample]
+    self.move = case name
+                when 'R2D2'
+                  RPSGame::VALUES['rock']
+                when 'Hal'
+                  hal_choose((1..100).to_a.sample)
+                else
+                  RPSGame::VALUES[RPSGame::VALUES.keys.sample]
+                end
     history << move
   end
 end
