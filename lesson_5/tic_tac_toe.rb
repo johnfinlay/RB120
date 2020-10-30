@@ -195,30 +195,33 @@ class TTTGame
     @current_player == 'human'
   end
 
-  public
+  def player_move
+    loop do
+      current_player_moves
+      break if board.someone_won? || board.full?
+      clear_screen_and_display_board if human_turn?
+    end
+  end
 
-  # rubocop:disable Metrics/MethodLength
-  def play
-    clear
-    display_welcome_message
-
+  def main_game
     loop do
       display_board
-
-      loop do
-        current_player_moves
-        break if board.someone_won? || board.full?
-        clear_screen_and_display_board if human_turn?
-      end
+      player_move
       display_result
       break unless play_again?
       reset
       display_play_again_message
     end
+  end
 
+  public
+
+  def play
+    clear
+    display_welcome_message
+    main_game
     display_goodbye_message
   end
-  # rubocop:enable Metrics/MethodLength
 end
 
 game = TTTGame.new
