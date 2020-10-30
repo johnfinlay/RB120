@@ -104,7 +104,7 @@ class TTTGame
   end
 
   private
-  
+
   def display_welcome_message
     puts "Welcom to Tic Tac Toe!"
     puts ""
@@ -203,7 +203,7 @@ class TTTGame
       loop do
         current_player_moves
         break if board.someone_won? || board.full?
-        clear_screen_and_display_board #if human_turn?
+        clear_screen_and_display_board if human_turn?
       end
       display_result
       break unless play_again?
