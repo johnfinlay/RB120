@@ -24,6 +24,8 @@ class Board
     unmarked_keys.empty?
   end
 
+  # rubocop:disable Metrics/AbcSize
+  # rubocop:disable Metrics/MethodLength
   def draw
     puts "     |     |"
     puts "  #{@squares[1]}  |  #{@squares[2]}  |  #{@squares[3]}"
@@ -37,6 +39,8 @@ class Board
     puts "  #{@squares[7]}  |  #{@squares[8]}  |  #{@squares[9]}"
     puts "     |     |"
   end
+  # rubocop:enable Metrics/AbcSize
+  # rubocop:enable Metrics/MethodLength
 
   def someone_won?
     !!winning_marker
@@ -193,6 +197,7 @@ class TTTGame
 
   public
 
+  # rubocop:disable Metrics/MethodLength
   def play
     clear
     display_welcome_message
@@ -213,6 +218,7 @@ class TTTGame
 
     display_goodbye_message
   end
+  # rubocop:enable Metrics/MethodLength
 end
 
 game = TTTGame.new
