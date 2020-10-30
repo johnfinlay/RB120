@@ -42,23 +42,21 @@ class Board
     !!winning_marker
   end
 
-  def count_human_marker(squares)
-    squares.collect(&:marker).count(TTTGame::HUMAN_MARKER)
-  end
-
-  def count_computer_marker(squares)
-    squares.collect(&:marker).count(TTTGame::COMPUTER_MARKER)
-  end
-
   def winning_marker
     WINNING_LINES.each do |line|
-      if count_human_marker(@squares.values_at(*line)) == 3
-        return TTTGame::HUMAN_MARKER
-      elsif count_computer_marker(@squares.values_at(*line)) == 3
-        return TTTGame::COMPUTER_MARKER
+      squares = @squares.values_at(*line)
+      if three_identical_markers?(squares)
+        return squares.first.marker
       end
     end
     nil
+  end
+
+  private
+
+  def three_identical_markers?(squares)
+    markers = squares.select(&:marked?).collect(&:marker)
+    markers.size == 3 && markers.all?(markers.first)
   end
 end
 
@@ -73,6 +71,10 @@ class Square
 
   def unmarked?
     @marker == INITIAL_MARKER
+  end
+
+  def marked?
+    @marker != INITIAL_MARKER
   end
 
   def to_s
@@ -91,14 +93,18 @@ end
 class TTTGame
   HUMAN_MARKER = 'X'
   COMPUTER_MARKER = 'O'
+  FIRST_TO_MOVE = 'human'
   attr_reader :board, :human, :computer
 
   def initialize
     @board = Board.new
     @human = Player.new(HUMAN_MARKER)
     @computer = Player.new(COMPUTER_MARKER)
+    @current_player = FIRST_TO_MOVE
   end
 
+  private
+  
   def display_welcome_message
     puts "Welcom to Tic Tac Toe!"
     puts ""
@@ -163,6 +169,7 @@ class TTTGame
 
   def reset
     board.reset
+    @current_player = FIRST_TO_MOVE
     clear
   end
 
@@ -170,6 +177,21 @@ class TTTGame
     puts "Let's play again!"
     puts ""
   end
+
+  def next_player
+    @current_player = human_turn? ? 'computer' : 'human'
+  end
+
+  def current_player_moves
+    human_turn? ? human_moves : computer_moves
+    next_player
+  end
+
+  def human_turn?
+    @current_player == 'human'
+  end
+
+  public
 
   def play
     clear
@@ -179,12 +201,9 @@ class TTTGame
       display_board
 
       loop do
-        human_moves
+        current_player_moves
         break if board.someone_won? || board.full?
-
-        computer_moves
-        clear_screen_and_display_board
-        break if board.someone_won? || board.full?
+        clear_screen_and_display_board #if human_turn?
       end
       display_result
       break unless play_again?
