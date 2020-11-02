@@ -88,9 +88,11 @@ end
 
 class Player
   attr_reader :marker
+  attr_accessor :score
 
   def initialize(marker)
     @marker = marker
+    @score = 0
   end
 end
 
@@ -160,8 +162,12 @@ class TTTGame
     clear_screen_and_display_board
 
     case board.winning_marker
-    when human.marker then puts "You won!"
-    when computer.marker then puts "Computer won!"
+    when human.marker
+      puts "You won!"
+      human.score += 1
+    when computer.marker
+      puts "Computer won!"
+      computer.score += 1
     else puts "It's a tie!"
     end
   end
@@ -182,10 +188,15 @@ class TTTGame
     system 'clear'
   end
 
-  def reset
+  def reset_game
     board.reset
     @current_player = FIRST_TO_MOVE
     clear
+  end
+
+  def reset_scores
+    human.score = 0
+    computer.score = 0
   end
 
   def display_play_again_message
@@ -202,6 +213,14 @@ class TTTGame
     next_player
   end
 
+  def display_score
+    puts "The score is you: #{human.score}, computer: #{computer.score}"
+    puts "You win the match!" if human.score == 5
+    puts "Computer wins the match!" if computer.score == 5
+    puts "Press Enter to continue."
+    gets.chomp
+  end
+
   def human_turn?
     @current_player == 'human'
   end
@@ -216,11 +235,17 @@ class TTTGame
 
   def main_game
     loop do
-      display_board
-      player_move
-      display_result
+      loop do
+        display_board
+        player_move
+        display_result
+        display_score
+        break if human.score == 5 || computer.score == 5
+        reset_game
+      end
       break unless play_again?
-      reset
+      reset_game
+      reset_scores
       display_play_again_message
     end
   end
