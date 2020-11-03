@@ -1,3 +1,5 @@
+require 'pry'
+
 class Board
   WINNING_LINES = [[1, 2, 3], [4, 5, 6], [7, 8, 9]] +
                   [[1, 4, 7], [2, 5, 8], [3, 6, 9]] +
@@ -41,6 +43,16 @@ class Board
   end
   # rubocop:enable Metrics/AbcSize
   # rubocop:enable Metrics/MethodLength
+
+  def get_hint(marker)
+    WINNING_LINES.each do |line|
+      squares = @squares.values_at(*line)
+      markers = squares.select(&:marked?).collect(&:marker)
+      # binding.pry
+      return line[squares.collect(&:marker).index(' ')] if markers.size == 2 && markers.all?(marker)
+    end
+    nil
+  end
 
   def someone_won?
     !!winning_marker
@@ -155,7 +167,10 @@ class TTTGame
   end
 
   def computer_moves
-    board[board.unmarked_keys.sample] = computer.marker
+    choice = board.get_hint(computer.marker)
+    choice = board.get_hint(human.marker) unless !!choice
+    choice = board.unmarked_keys.sample unless !!choice
+    board[choice] = computer.marker
   end
 
   def display_result
