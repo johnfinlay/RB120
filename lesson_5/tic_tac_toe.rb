@@ -49,7 +49,9 @@ class Board
       squares = @squares.values_at(*line)
       markers = squares.select(&:marked?).collect(&:marker)
       # binding.pry
-      return line[squares.collect(&:marker).index(' ')] if markers.size == 2 && markers.all?(marker)
+      if markers.size == 2 && markers.all?(marker)
+        return line[squares.collect(&:marker).index(' ')]
+      end
     end
     nil
   end
@@ -166,11 +168,15 @@ class TTTGame
     board[square] = human.marker
   end
 
-  def computer_moves
+  def best_choice
     choice = board.get_hint(computer.marker)
     choice = board.get_hint(human.marker) unless !!choice
     choice = board.unmarked_keys.sample unless !!choice
-    board[choice] = computer.marker
+    choice
+  end
+
+  def computer_moves
+    board[best_choice] = computer.marker
   end
 
   def display_result
@@ -248,20 +254,24 @@ class TTTGame
     end
   end
 
-  def main_game
+  def play_match
     loop do
-      loop do
-        display_board
-        player_move
-        display_result
-        display_score
-        break if human.score == 5 || computer.score == 5
-        reset_game
-      end
+      main_game
       break unless play_again?
       reset_game
       reset_scores
       display_play_again_message
+    end
+  end
+
+  def main_game
+    loop do
+      display_board
+      player_move
+      display_result
+      display_score
+      break if human.score == 5 || computer.score == 5
+      reset_game
     end
   end
 
@@ -270,7 +280,7 @@ class TTTGame
   def play
     clear
     display_welcome_message
-    main_game
+    play_match
     display_goodbye_message
   end
 end
