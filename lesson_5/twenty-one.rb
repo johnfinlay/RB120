@@ -1,9 +1,21 @@
-class Player
+class Player < Participant
   def initialize
     # what would the "data" or "states" of a Player object entail?
     # maybe cards? a name?
   end
+end
 
+class Dealer < Participant
+  def initialize
+    # seems like very similar to Player... do we even need this?
+  end
+
+  def deal
+    # does the dealer or the deck deal?
+  end
+end
+
+module Hand
   def hit
   end
 
@@ -18,30 +30,8 @@ class Player
   end
 end
 
-class Dealer
-  def initialize
-    # seems like very similar to Player... do we even need this?
-  end
-
-  def deal
-    # does the dealer or the deck deal?
-  end
-
-  def hit
-  end
-
-  def stay
-  end
-
-  def busted?
-  end
-
-  def total
-  end
-end
-
 class Participant
-  # what goes in here? all the redundant behaviors from Player and Dealer?
+  include Hand
 end
 
 class Deck
