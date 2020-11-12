@@ -211,14 +211,11 @@ class TwentyOne
     loop do
       answer = player.choose
 
-      if answer == 's'
-        puts "#{player.name} stays!"
-        break
-      end
+      puts "#{player.name} stays!" if answer == 's'
 
-      hit(player)
+      hit(player) unless answer == 's'
       player.show_hand
-      break if player.busted?
+      break if player.busted? || answer == 's'
     end
   end
 
@@ -271,6 +268,16 @@ class TwentyOne
     answer == 'y'
   end
 
+  def finish
+    system 'clear'
+    show_cards
+    if player.busted? || dealer.busted?
+      show_busted
+    else
+      show_result
+    end
+  end
+
   def start
     loop do
       system 'clear'
@@ -278,30 +285,9 @@ class TwentyOne
       show_flop
 
       player_turn
-      if player.busted?
-        show_busted
-        if play_again?
-          reset
-          next
-        else
-          break
-        end
-      end
+      dealer_turn unless player.busted?
+      finish
 
-      dealer_turn
-      if dealer.busted?
-        show_busted
-        if play_again?
-          reset
-          next
-        else
-          break
-        end
-      end
-
-      # both stayed
-      show_cards
-      show_result
       play_again? ? reset : break
     end
 
